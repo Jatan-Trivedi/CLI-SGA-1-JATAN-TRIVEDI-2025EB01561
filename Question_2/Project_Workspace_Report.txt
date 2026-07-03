@@ -1,1 +1,27 @@
+Secure Project Workspace Setup Report
 
+1. Directory structure created
+Commands: 
+mkdir -p my_project/docs
+touch my_project/docs/secret_design.txt
+Observation: I used `mkdir -p` to create a parent directory and a nested 'docs' directory simultaneously, then used `touch` to create an empty text file named 'secret_design.txt' inside it.
+
+2. File permissions before modification & Ownership details
+Command: ls -l my_project/docs/secret_design.txt
+Output: -rw-r--r-- 1 jatan_rivedi jatan_rivedi 0 Jul  3 14:01 my_project/docs/secret_design.txt
+Observation: I ran `ls -l` to view the default file permissions and ownership. The output shows my user as the owner.
+
+3. Umask value used
+Command: umask
+Output: 0022
+Observation: I executed `umask` to check the default mask that determines which permissions are restricted when new files or directories are created in my environment.
+
+4. File permissions after modification
+Commands: 
+chmod 600 my_project/docs/secret_design.txt
+ls -l my_project/docs/secret_design.txt
+Output: -rw------- 1 jatan_rivedi jatan_rivedi 0 Jul  3 14:01 my_project/docs/secret_design.txt
+Observation: I used `chmod 600` to change the file permissions and verified it with `ls -l`. The permissions updated to '-rw-------'.
+
+5. Explanation of how permissions protect project data
+By setting the permissions to 600, I have granted read and write access strictly to the file owner (my user account). All permissions for the group and other users have been completely removed (represented by the dashes '---'). This protects the project data by ensuring that no unauthorized users on the system can view, modify, or execute the sensitive files within the workspace.
