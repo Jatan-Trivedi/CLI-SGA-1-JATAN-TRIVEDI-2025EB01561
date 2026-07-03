@@ -1,1 +1,45 @@
+File System and Link Analysis Report
 
+1. Metadata collected using Linux utilities
+Command: stat original_file.txt
+Output:
+  File: original_file.txt
+  Size: 21        	Blocks: 8          IO Block: 4096   regular file
+Device: 8,48	Inode: 20267       Links: 1
+Access: (0644/-rw-r--r--)  Uid: ( 1000/jatan_rivedi)   Gid: ( 1000/jatan_rivedi)
+Access: 2026-07-03 15:07:22.986825928 +0000
+Modify: 2026-07-03 15:07:22.986825928 +0000
+Change: 2026-07-03 15:07:22.986825928 +0000
+ Birth: 2026-07-03 15:07:22.986825928 +0000
+
+Observation: The `stat` utility reveals deep metadata about the file, including its exact size, access/modify/change timestamps, and its assigned Inode number (20267).
+
+2. Inode numbers of all files
+Command: ls -li original_file.txt hard_link.txt sym_link.txt
+Output:
+20267 -rw-r--r-- 2 jatan_rivedi jatan_rivedi 21 Jul  3 15:07 hard_link.txt
+20267 -rw-r--r-- 2 jatan_rivedi jatan_rivedi 21 Jul  3 15:07 original_file.txt
+20268 lrwxrwxrwx 1 jatan_rivedi jatan_rivedi 17 Jul  3 15:08 sym_link.txt -> original_file.txt
+
+Observation: The original file and the hard link share the exact same Inode number (20267). The symbolic link has a uniquely different Inode number (20268) and points to the original file path.
+
+3. Effect of deleting the original file
+Commands:
+rm original_file.txt
+cat hard_link.txt
+cat sym_link.txt
+Output:
+jatan_rivedi@LAPTOP-JR42J90G:~$ rm original_file.txt
+jatan_rivedi@LAPTOP-JR42J90G:~$ cat hard_link.txt
+Learning Linux Links
+jatan_rivedi@LAPTOP-JR42J90G:~$ cat sym_link.txt
+cat: sym_link.txt: No such file or directory
+
+Observation: After deleting 'original_file.txt', reading 'hard_link.txt' still succeeds because the underlying data block is still intact. However, 'sym_link.txt' fails and results in a "No such file or directory" error because it was only pointing to the file path, which no longer exists.
+
+4. Comparison between hard link and symbolic link
+- Hard Link: Acts as a direct pointer to the physical data (Inode) on the disk. It mirrors the permissions and data of the original file. If the original file is deleted, the data persists as long as at least one hard link exists. Hard links cannot span across different file systems.
+- Symbolic (Soft) Link: Acts as a shortcut pointer to the *file path* of the original file, not the underlying Inode. It gets a new Inode number. If the original file is moved or deleted, the symbolic link breaks and becomes a "dangling link". Symbolic links can point to directories and span across different file systems.
+
+5. Conclusions drawn from the experiment
+Linux manages file data separately from file names. An Inode represents the data, while a file name is just a pointer to that Inode. Because a hard link points directly to the Inode, the data is safe even if the original name is deleted. Because a symbolic link just points to a name string, it breaks the moment the target name is removed.
