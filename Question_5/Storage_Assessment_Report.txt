@@ -1,1 +1,19 @@
+Storage Health Assessment Report
 
+1. Available storage devices
+Command: lsblk
+Observation: The lsblk output displays the block devices and partitions on the system.
+
+2. Mounted file systems & 3. Disk usage statistics
+Command: df -h
+Observation: The df -h command shows the total, used, and available space on mounted file systems in a human-readable format.
+
+4. Inode utilization
+Command: df -i
+Observation: The df -i output reveals inode consumption, which is critical because running out of inodes prevents creating new files even if disk space exists.
+
+5. Storage health observations
+Based on the outputs, the root file system (/) has sufficient available space. The inode utilization is also well within healthy limits.
+
+6. Recommendations for improving storage utilization
+Implement log rotation to prevent log files in /var/log from consuming excessive disk space, and monitor df -h and df -i periodically.
